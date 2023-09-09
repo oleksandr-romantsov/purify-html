@@ -5,27 +5,27 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/Aleksandr-JS-Developer/purify-html?style=flat-square)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/Aleksandr-JS-Developer/purify-html?style=flat-square)
 
-A minimalist client library for cleaning up strings so they can be safely used as HTML.
+Мінімалістична клієнтська бібліотека за для очистки строк для їх безпечного використання як HTML.
 
-Do simple things simply: zero configuration to completely strip a string of HTML, with the ability to incrementally customize as needed.
+Робіть прості речі просто: нульова конфігурація, щоб повністю очистити рядок від HTML, з можливістю поступового налаштування за потреби.
 
 Translations: English (current) | [Ukrainian](/README.ua.md)
 
-[Try it! (demo at codesandbox)](https://codesandbox.io/s/purify-html-6ere1w?file=/src/index.js)
+[Спробуй! (демо на codesandbox)](https://codesandbox.io/s/purify-html-6ere1w?file=/src/index.js)
 
-The basic idea is to use the browser API to parse and modify the DOM.
-Thus, several goals are achieved at once:
+Основна ідея полягає у використанні API браузера для аналізу та зміни DOM.
+Таким чином досягається відразу кілька цілей:
 
-- Actual native parser. The library uses the HTML parser that the browser will use to parse the HTML. Thus, there will be no situation when the payload will work in the browser, but does not work in the parser that the library uses.
-- Huge bundle size savings. Since the HTML standard is quite extensive, a quality parser is a rather heavy program that can be easily dispensed with.
-- Speed of work. The parser inside DOMParser is native, i.e. written not in JavaScript, but in high-performance C++ (for example, in v8). Thus, parsing is faster than any JavaScript library.
-- High % browser support. Although DOMParser has extensive support, you can use a polyfill or even your own parser. See [parserSetup](#setparser) for details.
+- Нативний парсер. Бібліотека використовує аналізатор HTML, який використовуватиме браузер для аналізу HTML. Таким чином, не буде ситуації, коли payload буде працювати в браузері, але не працюватиме в парсері, який використовує бібліотека.
+- Величезна економія розміру бандлу. Оскільки стандарт HTML досить великий, якісний парсер є досить важкою програмою, без якої можна легко обійтися.
+- Швидкість роботи. Парсер всередині DOMParser є нативним, тобто написаний не на JavaScript, а на високопродуктивній мові C++ (наприклад, у v8). Таким чином, аналіз швидший, ніж будь-яка бібліотека JavaScript.
+- Високий відсоток підтримки браузера. Хоча DOMParser має широку підтримку, ви можете використовувати polyfill або навіть свій власний парсер. Докладніше див. у [parserSetup](#setparser).
 
-As a result, parsing with DOMParser is more reliable, faster and does not require precious kilobytes of space in the build.
+Як наслідок, розбір за допомогою DOMParser надійніший, швидший і не потребує дорогоцінних кілобайтів простору в бандлі.
 
 ---
 
-## Install
+## Встановлення
 
 npm
 
@@ -44,7 +44,7 @@ CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/purify-html/dist/index.browser.js"></script>
 
-<!-- or -->
+<!-- чи -->
 
 <script type="module">
   import PurifyHTML from 'https://cdn.jsdelivr.net/npm/purify-html/+esm';
@@ -72,7 +72,7 @@ setParser({
 }): void
 ```
 
-See <a href="#setParser">here</a> for details.
+<a href="#setParser">Детальніше</a>
 
 <br>
 
@@ -80,7 +80,7 @@ See <a href="#setParser">here</a> for details.
 
 #### `sanitize(string): string`
 
-Performs string cleanup according to the rules passed in `options`.
+Виконує очищення рядка відповідно до правил, переданих у `options`.
 
 ```javascript
 import PurifyHTML, { setParser } from 'purify-html';
@@ -100,11 +100,15 @@ Coerces a string to HTML entities. Very similar to escaping, but for the HTML in
 In HTML, such characters will be rendered "as is".
 See more [here](https://www.w3schools.com/html/html_entities.asp).
 
+Приводить рядок у HTML entities. Дуже схоже на екранування, але для інтерпретатора HTML.
+У HTML такі символи відображатимуться «як є».
+Дивіться більше [тут](https://www.w3schools.com/html/html_entities.asp).
+
 ```javascript
 const str = '<br />';
 
 console.log(
-  sanitizer.toHTMLEntities(str); // => '&#60;&#98;&#114;&#32;&#47;&#62;', displays at the page like '<br />'
+  sanitizer.toHTMLEntities(str); // => '&#60;&#98;&#114;&#32;&#47;&#62;', на сторінці буде показано як '<br />'
 );
 ```
 
@@ -112,7 +116,7 @@ console.log(
 
 ### options: `Array<string | TagRule>`
 
-An array with rules for the sanitizer.
+Массив правил для санітайзера
 
 ```typescript
 type AttributeRulePresetName =
@@ -126,7 +130,7 @@ type AttributeRulePresetName =
 
 interface AttributeRule = {
   name: string;
-  // attribute name
+  // Ім'я аттрибута
 
   value?:
     | string
@@ -134,14 +138,14 @@ interface AttributeRule = {
     | RegExp
     | { preset: AttributeRulePresetName }
     | ((attributeValue: string) => boolean);
-  // rules for attribute value
+  // правила для аттрибута
 };
 
 interface TagRule = {
   name: string;
-  // tagname
+  // ім'я тегу
   attributes: AttributeRule[];
-  // rules for attributes
+  // правила для аттрибутів
   dontRemoveComments?: boolean;
 };
 ```
@@ -163,37 +167,37 @@ const sanitizer = new PurifyHTML([
 ]);
 ```
 
-**NOTE** When using regular expressions to check for untrusted strings, don't forget to check your regular expressions for ReDoS vulnerabilities.
-_A successful exploit of the ReDoS vulnerability is to cause the program to hang when trying to parse a specially crafted string._ <br>
-See more: https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
+**ПРИМІТКА** Використовуючи регулярні вирази для перевірки ненадійних рядків, не забудьте перевірити свої регулярні вирази на наявність уразливостей ReDoS.
+_Успішним використанням уразливості ReDoS є зависання програми під час спроби проаналізувати спеціально створений рядок._ <br>
+Детальніше: https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS
 
-## Examples
+## Приклади використання
 
-**via bundler:**
+**використання із збірником:**
 
 ```javascript
 import PurifyHTML from 'purify-html';
 
 const allowedTags = [
-  // only string
+  // тільки строка
   'hr',
 
-  // as object
+  // як об'єкт
   { name: 'br' },
 
-  // attributes check
+  // перевірка аттрибутів
   { name: 'b', attributes: ['class'] },
 
-  // advanced attributes check
+  // поглиблена перевірка аттрибутів
   { name: 'p', attributes: [{ name: 'class' }] },
 
-  // check attributes values (string)
+  // перевірка значень аттрибутів (строка)
   { name: 'strong', attributes: [{ name: 'id', value: 'awesome-strong-id' }] },
 
-  // check attributes values (RegExp)
+  // перевірка значень аттрибутів (регулярний вираз)
   { name: 'em', attributes: [{ name: 'id', value: /awesome-em-id?s/ }] },
 
-  // check attributes values (array of strings)
+  // перевірка значень аттрибутів (масив строк)
   {
     name: 'em',
     attributes: [
@@ -201,13 +205,14 @@ const allowedTags = [
     ],
   },
 
-  // check attribute value (function)
+  // перевірка значень аттрибутів (функція)
   {
     name: 'em',
     attributes: [{ name: 'id', value: value => value.startsWith('awesome-') }],
   },
 
   // use attributes checks preset
+  // використовуючи пресет для перевірки аттрибутів
   {
     name: 'a',
     attributes: [{ name: 'href', value: { preset: '%https-link%' } }],
@@ -247,11 +252,11 @@ console.log(safeString);
 */
 ```
 
-[Try it](https://codesandbox.io/s/lucid-mclean-6ere1w?file=/src/exampleFromReadme.js).
+[Спробувати](https://codesandbox.io/s/lucid-mclean-6ere1w?file=/src/exampleFromReadme.js).
 
 ---
 
-### Via CDN
+### Використання за допомогою CDN
 
 ```html
 <!-- ... -->
@@ -270,23 +275,23 @@ console.log(safeString);
 <!-- ... -->
 ```
 
-Usage for the browser is slightly different from usage with faucets. This is bad, but it had to be done in order not to clog the global scope.
+Використання для браузера дещо відрізняється від використання зі збірником. Це погано, але це потрібно було зробити, щоб не забивати global scope.
 
 ---
 
-## HTML comments
+## HTML коментарі
 
-### Description of the problem
+### Описання проблеми
 
-For example the line: `<!-- <img src="x" onerror="alert(1)"> -->`.
+Наприклад, рядок: `<!-- <img src="x" onerror="alert(1)"> -->`.
 
-Technically, inserting it into the DOM will not lead to code execution, but it cannot be considered safe either. The result of the `sanitize` method is declared to be sanitized using the rules specified when the sanitizer was initialized.
+Технічно вставлення його в DOM не призведе до виконання коду, але його також не можна вважати безпечним. Результат методу `sanitize` оголошується дезінфікованим за правилами, визначеними під час ініціалізації дезінфікуючого засобу.
 
-Therefore, you are given the opportunity to control in which places you will leave comments, and in which not.
+Тому вам надається можливість контролювати, в яких місцях ви будете залишати коментарі, а в яких ні.
 
 ### API
 
-By default, HTML comments are stripped. You can change it like this:
+По замовчуванню, HTML коментарі видаляються. Ви можете змінити це наступним чином:
 
 ```javascript
 import PurifyHTML from 'purify-html';
@@ -297,6 +302,8 @@ sanitizer.sanitize(/* ... */);
 ```
 
 If you want comments to be removed everywhere except for specific tags, then you can specify it like this:
+
+Якщо ви хочете
 
 ```javascript
 import PurifyHTML from 'purify-html';
